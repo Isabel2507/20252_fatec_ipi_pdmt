@@ -1,17 +1,32 @@
 import React from 'react'
 import Lontra from './Lontra'
-class App extends React.Component{
-  constructor(props){
+import EstacaoClimatica from './EstacaoClimatica'
+import Loading from './Loading'
+class App extends React.Component {
+  constructor(props) {
     super(props)
-    this.state = {
-      latitude: null,
-      longitude: null,
-      estacao: null,
-      data: null,
-      icone: null,
-      mensagemDeErro: null
-    }
+    // this.state = {
+    //   latitude: null,
+    //   longitude: null,
+    //   estacao: null,
+    //   data: null,
+    //   icone: null,
+    //   mensagemDeErro: null
+    // }
+    console.log('constructor')
   }
+
+  timer = null
+
+  state = {
+    latitude: null,
+    longitude: null,
+    estacao: null,
+    data: null,
+    icone: null,
+    mensagemDeErro: null
+  }
+
   icones = {
     'Primavera': 'tree-large',
     'Verão': 'sun',
@@ -28,12 +43,12 @@ class App extends React.Component{
     const d3 = new Date(anoAtual, 11, 22)
     //21/03
     const d4 = new Date(anoAtual, 2, 21)
-    const estaNoSul = latitude < 0 
-    if(data >= d1 && data < d2)
+    const estaNoSul = latitude < 0
+    if (data >= d1 && data < d2)
       return estaNoSul ? 'Inverno' : 'Verão'
-    if(data >= d2 && data < d3)
+    if (data >= d2 && data < d3)
       return estaNoSul ? 'Primavera' : 'Outono'
-    if(data >= d3 || data < d4)
+    if (data >= d3 || data < d4)
       return estaNoSul ? 'Verão' : 'Inverno'
     return estaNoSul ? 'Outono' : 'Primavera'
 
@@ -64,49 +79,52 @@ class App extends React.Component{
       }
     )
   }
-  // componentDidMount(){
-  //   this.obterLocalizacao()
-  // }
-  render(){
-    return(
+
+  componentDidMount() {
+    console.log(`componentDidMount`)
+    // this.obterLocalizacao()
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdate')
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
+  }
+
+  render() {
+    console.log('render')
+    return (
       <div className='container mt-2'>
         <div className='row'>
           <div className='col-12'>
-            <Lontra tamanho="fa-3x"/>
-            <Lontra tamanho="fa-3x"/>
+            <Lontra tamanho="fa-3x" />
+            <Lontra tamanho="fa-3x" />
           </div>
 
         </div>
         <div className='row'>
           <div className='col-sm-12'>
-            <div className="card">
-              <div className="card-body">
-                <div 
-                className="d-flex align-items-center border rounded mb-2" 
-                style={{height: '6rem'}}>
-                  <i className={`fa-solid fa-4x fa-${this.state.icone}`}></i>
-                  <p className="ms-2 w-75 text-center fs-1">{this.state.estacao}</p>
-                </div>
-                <div>
-                  <p className="text-center">
-                    {/*renderização condicional*/}
-                    {
-                      this.state.latitude ?
-                      `Coordenadas: ${this.state.latitude}, ${this.state.longitude}. 
-                      Data: ${this.state.data.toLocaleString()}`:
-                      this.state.mensagemDeErro ?
-                      `${this.state.mensagemDeErro}`:
-                      'Precisa liberar o acesso à localização'
-                    }
+            {
+              (!this.state.latitude && !this.state.mensagemDeErro) ?
+                <Loading/>
+                :
+                this.state.mensagemDeErro ?
+                  <p className="border rounded p-2 fs-1 text-center">
+                    É preciso dar permissão para acesso à localização. Atualize a página e tente de novo,
+                    ajustando a configuração no seu navegador
                   </p>
-                </div>
-                <button 
-                  className='btn btn-outline-primary w-100 mt-2'
-                  onClick={this.obterLocalizacao}>
-                  Qual a minha estação?
-                </button>
-              </div>
-            </div>
+                  :
+                  <EstacaoClimatica
+                    icone={this.state.icone}
+                    estacao={this.state.estacao}
+                    latitude={this.state.latitude}
+                    longitude={this.state.longitude}
+                    data={this.state.data}
+                    mensagemDeErro={this.state.mensagemDeErro}
+                    obterLocalizacao={this.obterLocalizacao} />
+            }
           </div>
           <div>
           </div>
